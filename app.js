@@ -1,8 +1,12 @@
 const express = require('express')
 const app = express()
 const port = 3000
+const swaggerUi = require('swagger-ui-express')
+const openapiSpec = require('./openapi.json')
+
 
 app.use(express.json())
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpec))
 
 const tasks = [
     {"id": 1, "title": "Task one", "done": false},
@@ -83,17 +87,13 @@ app.put('/tasks/:id', (req, res) => {
 
 app.delete('/tasks/:id', (req, res) => {
     const taskId = parseInt(req.params.id, 10)
-    const taskIndex = task.findIndex(t => t.id === taskId)
+    const taskIndex = tasks.findIndex(t => t.id === taskId)
 
     if(taskIndex === -1 ){
         return res.status(404).json({"error": "Task ID not found"})
     }
 
-    if(!task){
-        return res.status(404).json({"error": "Task ID not found"})
-    }
-
-    task.splice(taskIndex, 1)
+    tasks.splice(taskIndex, 1)
     res.status(204).send()
 })
 
