@@ -19,11 +19,11 @@ The server will start on `http://localhost:3000`
 
 ## Example Request
 
-\`\`\`bash
+```bash
 curl -i http://localhost:3000/tasks/1
-\`\`\`
+```
 
-\`\`\`
+```
 HTTP/1.1 200 OK
 X-Powered-By: Express
 Content-Type: application/json; charset=utf-8
@@ -34,4 +34,4 @@ Connection: keep-alive
 Keep-Alive: timeout=5
 
 {"id":1,"title":"Task one","done":false}
-\`\`\`
+```
