@@ -34,7 +34,7 @@ app.get('/tasks/:id', (req, res) => {
     const task = tasks.find(t => t.id === taskId)
     
     if(!task){
-        return res.status(404).json({"error": `Task ${taskId} not found`})
+        return res.status(404).json({"error": "Task ID not found"})
     }
 
     res.json(task)
@@ -56,6 +56,45 @@ app.post('/tasks', (req, res) => {
     tasks.push(newTask)
     res.status(201).json(newTask)
 
+})
+
+app.put('/tasks/:id', (req, res) => {
+    const taskId = parseInt(req.params.id, 10)
+    const task = tasks.find(t => t.id === taskId)
+
+    if(!task){
+        return res.status(404).json({"error": "Task ID not found"})
+    }
+
+    const { title, done } = req.body
+
+    if(!title || typeof title !== 'string' || title.trim() === '' ){
+        return res.status(400).json({"error": "Title has to be a string and should not be empty"})
+    }
+
+    if(typeof done !== 'boolean'){
+        return res.status(400).json({"error": "Title has to be a boolean"})
+    }
+
+    task.title = title
+    task.done = done
+    res.json(task)
+})
+
+app.delete('/tasks/:id', (req, res) => {
+    const taskId = parseInt(req.params.id, 10)
+    const taskIndex = task.findIndex(t => t.id === taskId)
+
+    if(taskIndex === -1 ){
+        return res.status(404).json({"error": "Task ID not found"})
+    }
+
+    if(!task){
+        return res.status(404).json({"error": "Task ID not found"})
+    }
+
+    task.splice(taskIndex, 1)
+    res.status(204).send()
 })
 
 app.listen(port, ()=>{
