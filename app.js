@@ -58,15 +58,27 @@ app.get('/health', (req, res) => {
 })
 
 app.get('/tasks', (req, res) => {
+    const rows = db.prepare('SELECT * FROM tasks').all()
+    const tasks = rows.map(row => ({
+        id: row.id,
+        title: row.title,
+        done: !!row.done
+    }))
     res.json(tasks)
 })
 
 app.get('/tasks/:id', (req, res) => {
     const taskId = parseInt(req.params.id, 10)
-    const task = tasks.find(t => t.id === taskId)
+    const row = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId)
     
-    if(!task){
+    if(!row){
         return res.status(404).json({"error": "Task ID not found"})
+    }
+
+    const task = {
+        id: row.id,
+        title: row.title,
+        done: !!row.done
     }
 
     res.json(task)
