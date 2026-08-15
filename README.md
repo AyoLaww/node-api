@@ -19,11 +19,11 @@ The server will start on `http://localhost:3000`
 
 ## Example Request
 
-\`\`\`bash
+```bash
 curl -i http://localhost:3000/tasks/1
-\`\`\`
+```
 
-\`\`\`
+```
 HTTP/1.1 200 OK
 X-Powered-By: Express
 Content-Type: application/json; charset=utf-8
@@ -35,20 +35,3 @@ Keep-Alive: timeout=5
 
 {"id":1,"title":"Task one","done":false}
 \`\`\`
-
-## SQL ACTIVITY 
-Query I ran: SELECT * FROM tasks WHERE done = 1
-Returned: id:2	title:Buy groceries	done:1
-
-## Why SQL was chose
-- SQL was chosen because of the single file structure (task.db), the near zero setup required, and the data persistency meaning that any data we input stay there even on system restart.
-- The database lives in the node-api/task.db file
-
-## DB browser screenshot
-![DB-browser screenshot](image.png)
-
-## Query screenshot
-![Query screenshot](image-1.png)
-
-## How to use 
-use npm i to install dependencies followed by npm start to initialize the project and start it up
