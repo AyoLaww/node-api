@@ -4,15 +4,43 @@ const port = 3000
 const swaggerUi = require('swagger-ui-express')
 const openapiSpec = require('./openapi.json')
 
+const db = require('better-sqlite3')('tasks.db')
 
 app.use(express.json())
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpec))
 
 const tasks = [
-    {"id": 1, "title": "Task one", "done": false},
-    {"id": 2, "title": "Task two", "done": false},
-    {"id": 3, "title": "Task three", "done": false}
+    {"id": 1, "title": "Get money", "done": false},
+    {"id": 2, "title": "Buy groceries", "done": true},
+    {"id": 3, "title": "Complete project", "done": false}
 ]
+
+//checking if the table is empty
+
+
+const { count } = db.prepare('SELECT COUNT(*) AS count FROM tasks').get()
+
+if(count === 0 ){
+    const insert = db.prepare(
+        `
+        INSERT INTO tasks (id, title, done)
+        VALUES (@id, @title, @done)
+        `
+    )
+
+    const insertMany = db.transaction((taskList) => {
+    for (const task of taskList){
+            insert.run({
+                id: task.id,
+                title: task.title,
+                done: task.done ? 1 : 0 
+                })
+        }
+    })
+
+    insertMany(tasks)
+}
+
 
 app.get('/', (req, res) => {
     res.json({
