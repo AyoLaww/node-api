@@ -15,8 +15,7 @@ const tasks = [
     {"id": 3, "title": "Complete project", "done": false}
 ]
 
-//checking if the table is empty
-
+const insertTask = db.prepare('INSERT INTO tasks (title, done) VALUES (?, ?)')
 
 const { count } = db.prepare('SELECT COUNT(*) AS count FROM tasks').get()
 
@@ -91,13 +90,15 @@ app.post('/tasks', (req, res) => {
         return res.status(400).json({"error": "Title is required"})
     }
 
+    const result = insertTask.run(title, 0)
+    const newId = result.lastInsertRowid
+
     const newTask = {
-     id: tasks.length + 1,
+     id: newId,
      title,
      done: false
     }
 
-    tasks.push(newTask)
     res.status(201).json(newTask)
 
 })
