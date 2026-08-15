@@ -35,3 +35,7 @@ Keep-Alive: timeout=5
 
 {"id":1,"title":"Task one","done":false}
 \`\`\`
+
+## SQL ACTIVITY 
+Query I ran: SELECT * FROM tasks WHERE done = 1
+Returned: id:2	title:Buy groceries	done:1
