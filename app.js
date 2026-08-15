@@ -16,6 +16,8 @@ const tasks = [
 ]
 
 const insertTask = db.prepare('INSERT INTO tasks (title, done) VALUES (?, ?)')
+const editRow = db.prepare(`UPDATE tasks SET title = ?, done = ? WHERE id = ?`)
+const deleteRow = db.prepare(`DELETE FROM tasks WHERE id = ?`)
 
 const { count } = db.prepare('SELECT COUNT(*) AS count FROM tasks').get()
 
@@ -105,9 +107,9 @@ app.post('/tasks', (req, res) => {
 
 app.put('/tasks/:id', (req, res) => {
     const taskId = parseInt(req.params.id, 10)
-    const task = tasks.find(t => t.id === taskId)
+    const row = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId)
 
-    if(!task){
+    if(!row){
         return res.status(404).json({"error": "Task ID not found"})
     }
 
@@ -118,23 +120,31 @@ app.put('/tasks/:id', (req, res) => {
     }
 
     if(typeof done !== 'boolean'){
-        return res.status(400).json({"error": "Title has to be a boolean"})
+        return res.status(400).json({"error": "Has to be a boolean"})
     }
 
-    task.title = title
-    task.done = done
-    res.json(task)
+    editRow.run(title, done ? 1 : 0, taskId)
+
+    const updatedRow = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId)
+    
+    const updatedTask = {
+        id: updatedRow.id,
+        title: updatedRow.title,
+        done: !!updatedRow.done
+    }
+
+    res.json(updatedTask)
 })
 
 app.delete('/tasks/:id', (req, res) => {
     const taskId = parseInt(req.params.id, 10)
-    const taskIndex = tasks.findIndex(t => t.id === taskId)
+    const row = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId)
 
-    if(taskIndex === -1 ){
+    if(!row){
         return res.status(404).json({"error": "Task ID not found"})
     }
 
-    tasks.splice(taskIndex, 1)
+    deleteRow.run(taskId)
     res.status(204).send()
 })
 
