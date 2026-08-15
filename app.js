@@ -15,6 +15,12 @@ const tasks = [
     {"id": 3, "title": "Complete project", "done": false}
 ]
 
+db.exec(`CREATE TABLE IF NOT EXISTS tasks(
+    id INTEGER PRIMARY KEY,
+    title TEXT NOT NULL,
+    done INTEGER NOT NULL DEFAULT 0
+    )`)
+
 const insertTask = db.prepare('INSERT INTO tasks (title, done) VALUES (?, ?)')
 const editRow = db.prepare(`UPDATE tasks SET title = ?, done = ? WHERE id = ?`)
 const deleteRow = db.prepare(`DELETE FROM tasks WHERE id = ?`)
