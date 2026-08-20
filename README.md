@@ -3,7 +3,7 @@ A simple REST API for managing a list of tasks, built with Express. Supports lis
 
 # Installing
 ```bash
-npm install express && node index.js
+npm install express && node app.js
 ```
 The server will start on `http://localhost:3000`
 
@@ -46,5 +46,14 @@ Keep-Alive: timeout=5
 ## Query screenshot
 ![Query screenshot](image-1.png)
 
+
+
 ## How to use 
-use npm i to install dependencies followed by npm start to initialize the project and start it up
+Set environment variables see [environment variable example](./.env.example)
+use docker compose up to initialize and run the whole project
+
+## Curl Screenshot
+![curl screenshot](image-2.png)
+
+# Database screeshots
+![database](image-3.png)
