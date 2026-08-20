@@ -32,31 +32,24 @@ app.get('/tasks/:id', async (req, res) => {
     res.json(task)
 })
 
-app.post('/tasks', (req, res) => {
+app.post('/tasks', async (req, res) => {
     const { title } = req.body
 
     if(!title){
         return res.status(400).json({"error": "Title is required"})
     }
 
-    const result = insertTask.run(title, 0)
-    const newId = result.lastInsertRowid
-
-    const newTask = {
-     id: newId,
-     title,
-     done: false
-    }
+    const newTask = await taskRepo.create(title)
 
     res.status(201).json(newTask)
 
 })
 
-app.put('/tasks/:id', (req, res) => {
+app.put('/tasks/:id', async (req, res) => {
     const taskId = parseInt(req.params.id, 10)
-    const row = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId)
+    const existing = await taskRepo.getById(taskId)
 
-    if(!row){
+    if(!existing){
         return res.status(404).json({"error": "Task ID not found"})
     }
 
@@ -70,28 +63,19 @@ app.put('/tasks/:id', (req, res) => {
         return res.status(400).json({"error": "Has to be a boolean"})
     }
 
-    editRow.run(title, done ? 1 : 0, taskId)
-
-    const updatedRow = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId)
-    
-    const updatedTask = {
-        id: updatedRow.id,
-        title: updatedRow.title,
-        done: !!updatedRow.done
-    }
-
+    const updatedTask = await taskRepo.update(taskId, title, done)
     res.json(updatedTask)
 })
 
-app.delete('/tasks/:id', (req, res) => {
+app.delete('/tasks/:id', async (req, res) => {
     const taskId = parseInt(req.params.id, 10)
-    const row = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId)
+    const existing = await taskRepo.getById(taskId)
 
-    if(!row){
+    if(!existing){
         return res.status(404).json({"error": "Task ID not found"})
     }
 
-    deleteRow.run(taskId)
+    await taskRepo.remove(taskId)
     res.status(204).send()
 })
 
