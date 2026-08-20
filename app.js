@@ -15,28 +15,18 @@ app.get('/health', (req, res) => {
     })
 })
 
-app.get('/tasks', (req, res) => {
-    const rows = db.prepare('SELECT * FROM tasks').all()
-    const tasks = rows.map(row => ({
-        id: row.id,
-        title: row.title,
-        done: !!row.done
-    }))
+app.get('/tasks', async (req, res) => {
+    const tasks = await taskRepo.getAll()
     res.json(tasks)
 })
 
-app.get('/tasks/:id', (req, res) => {
-    const taskId = parseInt(req.params.id, 10)
-    const row = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId)
-    
-    if(!row){
-        return res.status(404).json({"error": "Task ID not found"})
-    }
 
-    const task = {
-        id: row.id,
-        title: row.title,
-        done: !!row.done
+app.get('/tasks/:id', async (req, res) => {
+    const taskId = parseInt(req.params.id, 10)
+    const task = await taskRepo.getById(taskId)
+    
+    if(!task){
+        return res.status(404).json({"error": "Task ID not found"})
     }
 
     res.json(task)

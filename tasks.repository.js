@@ -28,5 +28,14 @@ async function init(){
     }
 }
 
+async function getAll(){
+    const { rows } = await pool.query(`SELECT * FROM tasks`)
+    return rows
+}
 
-module.exports = { init }
+async function getById(id){
+    const { rows } = await pool.query(`SELECT * FROM tasks WHERE id = $1`, [id])
+    return rows[0] || null
+}
+
+module.exports = { init, getAll, getById }
